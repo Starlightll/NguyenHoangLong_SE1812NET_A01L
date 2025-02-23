@@ -24,7 +24,7 @@
                 @Html.DisplayNameFor(model => model.NewsContent)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CreatedBy.AccountName)
+                @Html.DisplayNameFor(model => model.CreatedBy!.AccountName)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CreatedDate)
@@ -43,7 +43,7 @@
                     @Html.DisplayFor(modelItem => item.NewsContent)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreatedBy.AccountName)
+                    @Html.DisplayFor(modelItem => item.CreatedBy!.AccountName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.CreatedDate)
