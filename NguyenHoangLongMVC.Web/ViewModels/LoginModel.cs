@@ -5,7 +5,8 @@ namespace NguyenHoangLongMVC.Web.ViewModels
     public class LoginModel
     {
         [Required]
-        public string Username { get; set; } = null!;
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Password)]

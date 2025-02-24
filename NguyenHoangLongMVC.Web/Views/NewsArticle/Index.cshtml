@@ -1,58 +1,69 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-
-@model IEnumerable<NguyenHoangLongMVC.Application.DTOs.NewsArticleDto>
-
+﻿@model IEnumerable<NguyenHoangLongMVC.Application.DTOs.NewsArticleDto>
 @{
     ViewData["Title"] = "News Article";
 }
 
-<h2>News Article</h2>
+<link rel="stylesheet" href="~/css/news-article-index.css" asp-append-version="true" />
 
-<p>
-    This is the News Article page.
-</p>
+<div class="container-xl px-3 px-md-4 px-lg-5">
+    <div class="d-flex flex-column-reverse flex-md-row my-4 justify-content-between">
+        <div>
+            <h2 class="h1">News Articles</h2>
+            <p class="color-fg-muted">Browse the latest articles and updates</p>
+        </div>
+        @* <div class="mb-3 mb-md-0"> *@
+        @*     <a href="#" class="btn btn-primary">+ New Article</a> *@
+        @* </div> *@
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsContent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy!.AccountName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+    <div class="row">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NewsTitle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NewsContent)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedBy!.AccountName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedDate)
-                </td>
-                @* <td> *@
-                @*     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> | *@
-                @*     <a asp-action="Details" asp-route-id="@item.Id">Details</a> | *@
-                @*     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a> *@
-                @* </td> *@
-            </tr>
+            <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="news-card">
+                    <div class="p-3 d-flex flex-column h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            @{
+                                string categoryClass = item.Category?.CategoryId switch
+                                {
+                                    1 => "label-primary",
+                                    2 => "label-success",
+                                    3 => "label-danger",
+                                    4 => "label-warning",
+                                    5 => "label-info",
+                                    _ => "label-secondary"
+                                };
+                            }
+                            <span class="label @categoryClass">
+                                @Html.DisplayFor(modelItem => item.Category!.CategoryName)
+                            </span>
+                        </div>
+
+                        <h3 class="news-title mb-2">
+                            <a href="#" class="Link--primary">@Html.DisplayFor(modelItem => item.NewsTitle)</a>
+                        </h3>
+
+                        <div class="color-fg-muted mb-3 d-flex align-items-center">
+                            @* <img src="/api/placeholder/20/20" class="avatar avatar-small mr-1" alt="avatar" /> *@
+                            <span class="author-name">@Html.DisplayFor(modelItem => item.CreatedBy!.AccountName)</span>
+                            <span class="mx-1">•</span>
+                            <span>@item.CreatedDate?.ToString("MMM d, yyyy")</span>
+                        </div>
+
+                        <p class="news-content color-fg-muted mb-3">
+                            @Html.DisplayFor(modelItem => item.NewsContent)
+                        </p>
+
+                        <div class="mt-auto">
+                            <a href="#" class="gradient-btn">Read more →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
+    </div>
+</div>
+
+<style>
+   
+</style>

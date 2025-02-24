@@ -1,0 +1,107 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<NguyenHoangLongMVC.Application.DTOs.SystemAccountDto>
+@{
+
+}
+
+<link rel="stylesheet" href="~/css/account-management.css" asp-append-version="true" />
+
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Understood</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-xl px-3 px-md-4 px-lg-5">
+    <div class="d-flex flex-column-reverse flex-md-row my-4 justify-content-between">
+        <div>
+            <h2 class="h1">Account Management</h2>
+            <p class="color-fg-muted">Browse the latest articles and updates</p>
+        </div>
+        <!-- Button trigger modal -->
+        <div class="mb-3 mb-md-0">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                + New Account
+            </button>
+            @* <a href="#" onclick="callApi()" class="btn btn-primary">+ New Account</a>  *@
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        @foreach(var item in Model){
+        <div class="card col-12 row mb-3 flex-md-row">
+            <div class="card-body col-md-10">
+                <h5 class="card-title">@item.AccountName</h5>
+                <h6 class="card-subtitle mb-2 text-muted">@item.AccountEmail</h6>
+                
+                    @{
+                        string roleClass = item.AccountRole switch
+                        {
+                            0 => "label-info",
+                            1 => "label-info",
+                            _ => "label-secondary"
+                        };
+                    }    
+
+                    @{
+                        string role = item.AccountRole switch
+                        {
+                            0 => "Admin",
+                            1 => "Staff",
+                            2 => "Lecturer",
+                            _ => "User"
+                        };
+                    }
+
+                    <span class="label @roleClass">
+                        @role
+                    </span>
+
+
+
+            </div>
+                <div class="card-footer col-md-2" style="align-items: center; align-content: center; text-align: center;">
+                <a href="#" class="btn btn-dark"><i class=""></i>Edit</a>
+                <a href="#" class="btn btn-dark">View</a>
+            </div>
+        </div>
+        }
+    </div>
+</div>
+
+
+<script>
+
+        function callApi() {
+        $.ajax({
+            url: 'https://localhost:7034/api/Admin/GetSystemAccountById/1', // ID in URL
+            type: 'GET',
+            success: function (data) {
+                console.log("Success:", data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+        }
+</script>
+
+
+

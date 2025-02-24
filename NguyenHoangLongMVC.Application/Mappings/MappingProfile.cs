@@ -23,6 +23,12 @@ namespace NguyenHoangLongMVC.Application.Mappings
                .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category))
                .ForMember(dest => dest.CreatedBy, opt => opt.MapFrom(src => src.CreatedBy))
                .ForMember(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags));
+
+            CreateMap<SystemAccount, SystemAccountDto>()
+                .ForMember(dest => dest.AccountId, opt => opt.MapFrom(src => src.AccountId))
+                .ForMember(dest => dest.AccountName, opt => opt.MapFrom(src => src.AccountName))
+                .ForMember(dest => dest.AccountEmail, opt => opt.MapFrom(src => src.AccountEmail))
+                .ForMember(dest => dest.AccountRole, opt => opt.MapFrom(src => src.AccountRole));
         }
     }
 }

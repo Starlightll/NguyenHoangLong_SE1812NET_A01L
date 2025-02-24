@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NguyenHoangLongMVC.Application.Interfaces;
 using NguyenHoangLongMVC.Application.Mappings;
@@ -16,6 +17,21 @@ namespace NguyenHoangLongMVC.Web
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
+            //Add Authentication
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Auth/Login";
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+                options.AddPolicy("StaffOnly", policy => policy.RequireRole("Staff"));
+                options.AddPolicy("LecturerOnly", policy => policy.RequireRole("Lecturer"));
+            });
+
             builder.Services.AddDbContext<MyDbContext>(option =>
             {
                 option.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn"));
@@ -24,9 +40,21 @@ namespace NguyenHoangLongMVC.Web
             //Register Repository and Service
             builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
             builder.Services.AddScoped<INewsArticleService, NewsArticleService>();
+            builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IAccountService, AccountService>();
 
             //Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader());
+            });
 
             var app = builder.Build();
 
@@ -40,6 +68,7 @@ namespace NguyenHoangLongMVC.Web
 
             //Set startup page
 
+            app.UseCors("AllowAll");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

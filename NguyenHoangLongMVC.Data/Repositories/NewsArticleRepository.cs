@@ -19,7 +19,7 @@ namespace NguyenHoangLongMVC.Data.Repositories
         }
         public async Task<IEnumerable<NewsArticle>> GetAllNewsArticleAsync()
         {
-            return await _context.NewsArticles.Include(na => na.CreatedBy).ToListAsync();
+            return await _context.NewsArticles.Include(na => na.CreatedBy).Include(na => na.Category).Include(na => na.Tags).Where(na => na.NewsStatus == true).ToListAsync();
         }
 
         public Task<NewsArticle> GetNewsArticleByIdAsync(string newsArticleId)

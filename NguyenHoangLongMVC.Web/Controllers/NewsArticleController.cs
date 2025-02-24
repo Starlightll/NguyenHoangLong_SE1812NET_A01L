@@ -11,7 +11,6 @@ namespace NguyenHoangLongMVC.Web.Controllers
         {
             this.newsArticleService = newsArticleService;
         }
-        
 
         public async Task<IActionResult> Index()
         {

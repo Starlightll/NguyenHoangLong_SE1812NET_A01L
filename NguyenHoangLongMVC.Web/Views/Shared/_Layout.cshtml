@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿
+@{
+    var account = User.Claims.FirstOrDefault(c => c.Type == "AccountObject")?.Value;
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,49 +13,131 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NguyenHoangLongMVC.Web.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NguyenHoangLongMVC.Web</a>
+<body class="layout-body">
+    <header class="header-nav">
+        <nav class="navbar navbar-expand-sm navbar-light">
+            <div class="container-xl px-3 px-md-4 px-lg-5">
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    @* <img src="/api/placeholder/24/24" alt="Logo" class="me-2 rounded-circle"> *@
+                    <span class="brand-text">NguyenHoangLong</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="NewsArticle" asp-action="Index">News Article</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="NewsArticle" asp-action="Index">News Article</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        @if (!string.IsNullOrEmpty(account))
+                        {
+                            var user = Newtonsoft.Json.JsonConvert.DeserializeObject<NguyenHoangLongMVC.Application.DTOs.SystemAccountDto>(account);
+                            if (user.AccountRole == 0)
+                            {
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle dropdown-menu-dark" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Management
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="AccountManagement">Accounts Management</a></li>
+                                    </ul>
+                                </div>
+                            }
+                                if (user.AccountRole == 1)
+                            {
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle dropdown-menu-dark" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Management
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                        <li><button class="dropdown-item" type="button">Category Management</button></li>
+                                        <li><button class="dropdown-item" type="button">News Article Management</button></li>
+                                        <li><button class="dropdown-item" type="button">History</button></li>
+                                    </ul>
+                                </div>
+                            }
+                        }
                     </ul>
-                    <button class="btn btn-secondary ps-3 pe-3">
-                        <a class=" text-dark text-decoration-none text-white" asp-area="" asp-controller="Auth" asp-action="Login">Login</a>
-                    </button>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-border-gradiant dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                Hello, @User.Identity.Name
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-prime mt-2">
+                                <li>
+                                    <div style="background: black; margin: 0 10px; border-radius: 5px; color: white;">
+                                        @if (!string.IsNullOrEmpty(account))
+                                        {
+                                            var user = Newtonsoft.Json.JsonConvert.DeserializeObject<NguyenHoangLongMVC.Application.DTOs.SystemAccountDto>(account);
+                                            <h6 style="padding: .25rem 1rem;">@user.AccountName</h6>
+                                            @if(user.AccountRole == 0)
+                                            {
+                                                <p class="text-muted">Admin</p>
+                                            }
+                                            else if(user.AccountRole == 1)
+                                            {
+                                                <p class="text-muted">Staff</p>
+                                            }
+                                            else
+                                            {
+                                                <p class="text-muted">Lecturer</p>
+                                            }
+
+                                        }
+                                       
+                                    </div>
+                                    </li>
+                                <li><button class="dropdown-item" type="button">Profile</button></li>
+                                @* <li><button class="dropdown-item" type="button">Settings</button></li> *@
+                                @* <li><button class="dropdown-item" type="button">Dashboard</button></li> *@
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" asp-controller="Auth" asp-action="Logout">Sign out</a></li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="login-btn btn" asp-area="" asp-controller="Auth" asp-action="Login">
+                            Sign in
+                        </a>
+                    }
                 </div>
-                
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+    <div class="main-container">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - NguyenHoangLongMVC.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="footer">
+        <div class="container-xl px-3 px-md-4 px-lg-5">
+            <div class="d-flex flex-column flex-sm-row justify-content-between py-4">
+                <div class="footer-copyright">
+                    © 2025 NguyenHoangLong. All rights reserved.
+                </div>
+                <div class="footer-links">
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    <a href="#">Terms</a>
+                    <a href="#">Contact</a>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
-</html>

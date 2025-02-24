@@ -20,3 +20,113 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+
+ .container-xl {
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .header-nav {
+        background-color: var(--color-header-bg);
+        border-bottom: 1px solid var(--color-header-border);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        backdrop-filter: blur(8px);
+    }
+
+    .navbar {
+        padding: 1rem 0;
+    }
+
+    .brand-text {
+        font-weight: 600;
+        font-size: 1.25rem;
+        color: #24292f;
+    }
+
+    .nav-link {
+        color: var(--color-nav-link) !important;
+        font-weight: 500;
+        padding: 0.5rem 1rem !important;
+        transition: color 0.2s ease;
+    }
+
+
+.label {
+    display: inline-block;
+    padding: 0 7px;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 2em;
+    line-height: 18px;
+    text-decoration: none;
+}
+
+.label-primary {
+    background-color: #ddf4ff;
+    color: #0969da;
+}
+
+.label-success {
+    background-color: #dafbe1;
+    color: #1a7f37;
+}
+
+.label-danger {
+    background-color: #ffebe9;
+    color: #cf222e;
+}
+
+.label-warning {
+    background-color: #fff8c5;
+    color: #9a6700;
+}
+
+.label-info {
+    background-color: #ddf7ff;
+    color: #0969da;
+}
+
+.label-secondary {
+    background-color: #f6f8fa;
+    color: #57606a;
+}
+
+
+.btn-primary {
+    color: #ffffff;
+    background-color: #2da44e;
+    border-color: rgba(27,31,36,0.15);
+    box-shadow: 0 1px 0 rgba(27,31,36,0.1);
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+    .btn-primary:hover {
+        background-color: #2c974b;
+        border-color: rgba(27,31,36,0.15);
+    }
+
+.btn-secondary {
+    color: #ffffff;
+    background-color: #000000;
+    border-color: rgba(27,31,36,0.15);
+    box-shadow: 0 1px 0 rgba(27,31,36,0.1);
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+    .btn-secondary:hover {
+        background-color: #2c974b;
+        border-color: rgba(27,31,36,0.15);
+    }
