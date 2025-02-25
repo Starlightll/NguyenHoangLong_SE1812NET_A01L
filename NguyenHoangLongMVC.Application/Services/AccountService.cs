@@ -59,5 +59,7 @@ namespace NguyenHoangLongMVC.Application.Services
             var account = await _systemAccountRepository.GetSystemAccountById(id);
             return _mapper.Map<SystemAccountDto>(account);
         }
+
+        
     }
 }

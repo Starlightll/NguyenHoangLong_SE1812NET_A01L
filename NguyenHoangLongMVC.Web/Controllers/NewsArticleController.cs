@@ -21,7 +21,16 @@ namespace NguyenHoangLongMVC.Web.Controllers
 
         public async Task<IActionResult> Details(string id)
         {
+            if(string.IsNullOrEmpty(id))
+            {
+                return NotFound();
+            }
+
             var newsArticle = await newsArticleService.GetNewsArticleByIdAsync(id);
+            if (newsArticle == null)
+            {
+                return NotFound("Article not found.");
+            }
             return View(newsArticle);
         }
     }

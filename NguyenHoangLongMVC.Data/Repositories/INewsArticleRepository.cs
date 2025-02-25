@@ -16,6 +16,6 @@ namespace NguyenHoangLongMVC.Data.Repositories
 
         Task UpdateNewsArticleAsync(NewsArticle newsArticle);
 
-
+        Task<IEnumerable<NewsArticle>> GetAll();
     }
 }

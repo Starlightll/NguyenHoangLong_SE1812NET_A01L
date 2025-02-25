@@ -40,7 +40,7 @@
                         </div>
 
                         <h3 class="news-title mb-2">
-                            <a href="#" class="Link--primary">@Html.DisplayFor(modelItem => item.NewsTitle)</a>
+                            <a asp-controller="NewsArticle" asp-action="Details" asp-route-id="@item.NewsArticleId" class="Link--primary">@Html.DisplayFor(modelItem => item.NewsTitle)</a>
                         </h3>
 
                         <div class="color-fg-muted mb-3 d-flex align-items-center">
@@ -55,7 +55,7 @@
                         </p>
 
                         <div class="mt-auto">
-                            <a href="#" class="gradient-btn">Read more →</a>
+                            <a asp-controller="NewsArticle" asp-action="Details" asp-route-id="@item.NewsArticleId" class="gradient-btn">Read more →</a>
                         </div>
                     </div>
                 </div>

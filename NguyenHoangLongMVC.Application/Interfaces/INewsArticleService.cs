@@ -17,6 +17,6 @@ namespace NguyenHoangLongMVC.Application.Interfaces
 
         Task UpdateNewsArticleAsync(NewsArticleDto newsArticleDto);
 
-
+        Task<IEnumerable<NewsArticleDto>> GetHistory();
     }
 }

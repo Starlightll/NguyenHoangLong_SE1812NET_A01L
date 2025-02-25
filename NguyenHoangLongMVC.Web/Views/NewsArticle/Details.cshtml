@@ -6,9 +6,61 @@
 @model NguyenHoangLongMVC.Application.DTOs.NewsArticleDto
 
 @{
-    
+
 }
 
-<h1>@Model.NewsTitle</h1>
+<link href="/css/news-article-details.css" rel="stylesheet" />
 
+<div class="container-xl px-3 px-md-4 px-lg-5">
+    <div class="row mt-5">
+        <div class="col-md-3">
+            <div style="border-radius: 5px; border: solid 1px #d3d3d3; padding: 20px; position: sticky; top: 100px; left: 0;">
+                @{
+                    string categoryClass = Model.Category?.CategoryId switch
+                    {
+                        1 => "label-primary",
+                        2 => "label-success",
+                        3 => "label-danger",
+                        4 => "label-warning",
+                        5 => "label-info",
+                        _ => "label-secondary"
+                    };
+                }
+                <span class="label @categoryClass">
+                    @Model.Category.CategoryName
+                </span>
+                <p class="mt-1">@Model.Category.CategoryDesciption</p>
+                @{
+                    var tags = Model.Tags;
+                }
+                <div>
+                    @foreach (var tag in tags)
+                    {
+                        <span class="badge bg-primary">@tag.TagName</span>
+                    }
+                </div>
+                <a onclick="window.history.go(-1)" class="btn btn-link mt-3 text-decoration-none">← Back to News Articles</a>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div>
+                <h1>@Model.NewsTitle</h1>
+                <span class="fw-bold">@Model.CreatedBy.AccountName </span>
+                <span class="mx-1">•</span>
+                <span>@Model.CreatedDate?.ToString("MMM d, yyyy")</span>
+            </div>
 
+            <div class="mt-5">
+                <h3>@Model.Headline</h3>
+                <p style="white-space: break-spaces">@Model.NewsContent</p>
+            </div>
+            <p class="mt-5">Last updated: @Model.ModifiedDate?.ToString("MMM d, yyyy")</p>
+            <p>@Model.NewsSource</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    
+ 
+</style>

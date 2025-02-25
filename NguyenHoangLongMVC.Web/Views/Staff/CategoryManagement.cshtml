@@ -1,0 +1,671 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<NguyenHoangLongMVC.Application.DTOs.CategoryDto>
+
+@{
+}
+
+@{
+
+    String GetRandomColor(String name)
+    {
+        int hash = 0;
+        for (int i = 0; i < name.Length; i++)
+        {
+            hash = name.ToCharArray().Length + ((hash << 5) - hash);
+        }
+        String color = "";
+        for (int i = 0; i < 3; i++)
+        {
+            int value = (hash >> (i * 8)) & 0xFF;
+            color += String.Format("%02x", value);
+        }
+        return "#" + color;
+    }
+}
+
+<link rel="stylesheet" href="~/css/account-management.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<!-- New Category Modal -->
+<div class="modal fade" id="newCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content gh-border gh-rounded-md">
+            <div class="modal-header gh-border-bottom">
+                <h5 class="modal-title gh-h5" id="newCategoryModalLabel">New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body gh-px-4">
+                <form id="createCategoryForm">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label gh-fw-semibold gh-mb-1">Category Name</label>
+                        <input type="text" class="form-control form-control-sm" id="categoryName" name="categoryName">
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label gh-fw-semibold gh-mb-1">Category Description</label>
+                        <textarea class="form-control form-control-sm" id="categoryDescription" name="categoryDesciption"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="parentCategory" class="form-label gh-fw-semibold gh-mb-1">Parent Category</label>
+                        <select class="form-select form-select-sm" id="parentCategory" name="parentCategoryId">
+                            <option value="-1" selected>Default</option>
+                            @foreach (var category in Model)
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryStatus" class="form-label gh-fw-semibold gh-mb-1">Status</label>
+                        <select class="form-select form-select-sm" id="categoryStatus" name="isActive">
+                            <option value="true">Active</option>
+                            <option value="false">Disable</option>
+                        </select>
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer gh-bg-light gh-border-top">
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button id="createCategoryBtn" class="btn btn-sm btn-primary">Create Category</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Category Modal -->
+<div class="modal fade" id="updateCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="updateCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content gh-border gh-rounded-md">
+            <div class="modal-header gh-border-bottom">
+                <h5 class="modal-title gh-h5" id="updateCategoryModalLabel">Update Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body gh-px-4">
+                <form id="updateCategoryForm">
+                    <input type="hidden" value="" id="categoryId"> 
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label gh-fw-semibold gh-mb-1">Category Name</label>
+                        <input type="text" class="form-control form-control-sm" id="categoryName" name="categoryName">
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label gh-fw-semibold gh-mb-1">Category Description</label>
+                        <textarea class="form-control form-control-sm" id="categoryDescription" name="categoryDesciption"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="parentCategory" class="form-label gh-fw-semibold gh-mb-1">Parent Category</label>
+                        <select class="form-select form-select-sm" id="parentCategory" name="parentCategoryId">
+                            <option value="-1" selected>Default</option>
+                            @foreach (var category in Model)
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryStatus" class="form-label gh-fw-semibold gh-mb-1">Status</label>
+                        <select class="form-select form-select-sm" id="categoryStatus" name="isActive">
+                            <option value="true">Active</option>
+                            <option value="false">Disable</option>
+                        </select>
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer gh-bg-light gh-border-top">
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button id="updateCategoryBtn" class="btn btn-sm btn-primary" onclick="UpdateCategory()">Update Category</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- View Category Detail Modal-->
+<div class="modal fade" id="viewCategoryModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content gh-border gh-rounded-md">
+            <div class="modal-header gh-border-bottom">
+                <h5 class="modal-title gh-h5" id="viewCategoryModalLabel">Category Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body gh-px-4">
+                <form id="viewCategoryForm">
+                    <input type="hidden" value="" id="categoryId">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label gh-fw-semibold gh-mb-1">Category Name</label>
+                        <input type="text" class="form-control form-control-sm" id="categoryName" name="categoryName">
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDescription" class="form-label gh-fw-semibold gh-mb-1">Category Description</label>
+                        <textarea class="form-control form-control-sm" id="categoryDescription" name="categoryDesciption"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="parentCategory" class="form-label gh-fw-semibold gh-mb-1">Parent Category</label>
+                        <select class="form-select form-select-sm" id="parentCategory" name="parentCategoryId">
+                            <option value="-1" selected>Default</option>
+                            @foreach (var category in Model)
+                            {
+                                <option value="@category.CategoryId">@category.CategoryName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryStatus" class="form-label gh-fw-semibold gh-mb-1">Status</label>
+                        <select class="form-select form-select-sm" id="categoryStatus" name="isActive">
+                            <option value="true">Active</option>
+                            <option value="false">Disable</option>
+                        </select>
+                        <div class="invalid-feedback">Category Name is required.</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer gh-bg-light gh-border-top">
+                <button type="button" class="btn btn-sm" data-bs-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="gh-Layout gh-Layout--flowRow-until-md">
+    
+
+    <!-- Main content -->
+    <div class="gh-Layout-main">
+        <div class="container-xl gh-p-responsive gh-py-4">
+            <!-- Header section -->
+            <div class="gh-d-flex gh-flex-column-reverse gh-flex-md-row gh-mb-3 gh-justify-content-between gh-border-bottom gh-pb-3">
+                <div>
+                    <h1 class="gh-h3 gh-mb-1">Category management</h1>
+                    <p class="gh-color-fg-muted">Manage system categories and their permissions</p>
+                </div>
+                <div class="gh-mb-3 gh-mb-md-0">
+                    <button type="button" class="gh-btn gh-btn-primary gh-btn-sm" data-bs-toggle="modal" data-bs-target="#newCategoryModal">
+                        <i class="fas fa-plus gh-me-1"></i> New Category
+                    </button>
+                </div>
+            </div>
+
+            @* <!-- Filter section -->
+            <div class="gh-subnav gh-mb-4">
+                <nav class="gh-subnav-links" aria-label="Account filter navigation">
+                    <a class="gh-subnav-item gh-selected" href="#">All accounts <span class="gh-Counter">@Model.Count()</span></a>
+                    <a class="gh-subnav-item" href="#">Admins <span class="gh-Counter">@Model.Count(m => m.AccountRole == 0)</span></a>
+                    <a class="gh-subnav-item" href="#">Staff <span class="gh-Counter">@Model.Count(m => m.AccountRole == 1)</span></a>
+                    <a class="gh-subnav-item" href="#">Lecturers <span class="gh-Counter">@Model.Count(m => m.AccountRole == 2)</span></a>
+                </nav>
+                <div class="gh-subnav-search">
+                    <input type="text" class="form-control gh-subnav-search-input" placeholder="Find an account...">
+                    <i class="fas fa-search gh-subnav-search-icon"></i>
+                </div>
+            </div> *@
+
+            <!-- Account list -->
+            <div class="gh-Box">
+                <div class="gh-Box-header gh-d-flex gh-flex-items-center">
+                    <h2 class="gh-Box-title">Categories <span class="gh-Counter gh-Counter--primary">@Model.Count()</span></h2>
+                </div>
+                <ul class="gh-Box-list" id="categoryList">
+                    <li class="gh-Box-row gh-d-flex gh-flex-items-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </li>
+                </ul>
+                @* <CategoryList /> *@
+                @* <ul class="gh-Box-list">
+                    @foreach (var item in Model)
+                    {
+                        <li class="gh-Box-row gh-d-flex gh-flex-items-center">
+                            <div class="gh-flex-shrink-0 gh-me-3">
+                                <div class="gh-avatar gh-CircleBadge" style="background-color: #111111)">
+                                    <span class="text-black">@item.CategoryId</span>
+                                </div>
+                            </div>
+                            <div class="gh-flex-auto gh-min-width-0">
+                                <div class="gh-d-flex gh-flex-items-center">
+                                    <strong class="gh-me-2">@item.CategoryName</strong>
+                                    @{
+                                        (string roleClass, string labelClass, string role) = item.IsActive switch
+                                        {
+                                            true => ("gh-Label--success", "gh-bg-accent-emphasis", "Active"),
+                                            false => ("gh-Label--danger", "gh-bg-success", "Disable"),
+                                        };
+                                    }
+                                    <span class="gh-Label @roleClass">@role</span>
+                                </div>
+                                <div class="gh-color-fg-muted gh-text-small">
+                                    @item.ParentCategory.CategoryName
+                                </div>
+                            </div>
+                            <div class="gh-BtnGroup gh-d-flex">
+                                <button type="button" class="gh-btn gh-btn-sm gh-BtnGroup-item" aria-label="Edit this account">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button type="button" class="gh-btn gh-btn-sm gh-BtnGroup-item" aria-label="View this account">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <details class="gh-btn gh-btn-sm gh-dropdown gh-details-reset gh-details-overlay gh-d-inline-block gh-BtnGroup-item">
+                                    <summary class="" aria-haspopup="true">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </summary>
+                                    <div class="gh-dropdown-menu gh-dropdown-menu-sw">
+                                        <button type="button" class="gh-dropdown-item gh-text-danger">
+                                            <i class="fas fa-trash gh-me-2"></i> Delete
+                                        </button>
+                                        <button type="button" class="gh-dropdown-item">
+                                            <i class="fas fa-key gh-me-2"></i> Reset password
+                                        </button>
+                                    </div>
+                                </details>
+                            </div>
+                        </li>
+                    }
+                </ul> *@
+            </div>
+
+            <!-- Pagination -->
+            <div class="gh-paginate-container gh-my-3 gh-d-flex gh-flex-justify-center">
+                <div class="gh-pagination">
+                    <span class="gh-previous_page gh-disabled">Previous</span>
+                    <em class="gh-current" aria-current="page">1</em>
+                    <a href="#" rel="next" class="gh-page-link">2</a>
+                    <a href="#" class="gh-page-link">3</a>
+                    <span class="gh-gap">…</span>
+                    <a href="#" class="gh-page-link">5</a>
+                    <a href="#" rel="next" class="gh-next_page">Next</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchCategories();
+    });
+
+    let categories = [];
+
+        function fetchCategories() {
+        const categoryList = document.getElementById('categoryList');
+        categoryList.innerHTML = '';
+
+        fetch('https://localhost:7034/api/Staff/Categories')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.$values || !Array.isArray(data.$values)) {
+                    throw new Error("Invalid data format");
+                }
+                
+                categories = data.$values;
+
+                categoryList.innerHTML = ''; // Clear loading spinner
+
+                data.$values.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'gh-Box-row gh-d-flex gh-flex-items-center';
+                    li.innerHTML = `
+                        <div class="gh-flex-shrink-0 gh-me-3">
+                            <div class="gh-avatar gh-CircleBadge" style="background-color: #111111">
+                                <span class="text-white">${item.categoryId}</span>
+                            </div>
+                        </div>
+                        <div class="gh-flex-auto gh-min-width-0">
+                            <div class="gh-d-flex gh-flex-items-center">
+                                <strong class="gh-me-2">${item.categoryName}</strong>
+                                <span class="gh-Label ${item.isActive ? 'gh-Label--success' : 'gh-Label--danger'}">${item.isActive ? 'Active' : 'Disable'}</span>
+                            </div>
+                        </div>
+                        <div class="gh-BtnGroup gh-d-flex">
+                                <button type="button" class="gh-btn gh-btn-sm gh-BtnGroup-item" aria-label="Edit this account" onclick="ShowUpdateCategoryModal(${item.categoryId})">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                                <button type="button" class="gh-btn gh-btn-sm gh-BtnGroup-item" aria-label="View this account" onclick="ViewCategoryModal(${item.categoryId})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <details class="gh-btn gh-btn-sm gh-dropdown gh-details-reset gh-details-overlay gh-d-inline-block gh-BtnGroup-item">
+                                    <summary class="" aria-haspopup="true">
+                                        <i class="fas fa-ellipsis-h"></i>
+                                    </summary>
+                                    <div class="gh-dropdown-menu gh-dropdown-menu-sw">
+                                        <button type="button" class="gh-dropdown-item gh-text-danger" onclick="DeleteCategory(${item.categoryId})">
+                                            <i class="fas fa-trash gh-me-2"></i> Delete
+                                        </button>
+                                    </div>
+                                </details>
+                            </div>
+                    `;
+                    categoryList.appendChild(li);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+                categoryList.innerHTML = '<li class="gh-Box-row gh-d-flex gh-flex-items-center">Error loading categories</li>';
+            });
+    }
+
+
+        document.getElementById("createCategoryBtn").addEventListener("click", function () {
+        const formData = {
+            CategoryName: document.getElementById("categoryName").value,
+            CategoryDesciption: document.getElementById("categoryDescription").value,
+            ParentCategoryId: document.getElementById("parentCategory").value === "-1" ? null : parseInt(document.getElementById("parentCategory").value),
+            IsActive: document.getElementById("categoryStatus").value === "true"?true:false,
+        };
+
+        fetch('https://localhost:7034/api/Staff/Category', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create category");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Success:", data);
+            alert("Category created successfully!");
+            fetchCategories();
+            //Close Modal and Clean form
+            // Close the modal
+            $('#newCategoryModal').modal('hide');
+
+            let form = document.getElementById("createCategoryForm");
+            form.reset();
+
+            // Clear form fields
+            document.getElementById("createCategoryForm").reset();
+            form.querySelectorAll(".is-valid, .is-invalid").forEach(field => {
+            field.classList.remove("is-valid", "is-invalid");
+            });
+            //Reload the page
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error creating category!");
+        });
+    });
+
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+        // Get form fields
+        const categoryName = document.getElementById("categoryName");
+        const categoryStatus = document.getElementById("categoryStatus");
+
+        // Function to validate field
+        function validateField(input, condition, message) {
+            if (condition) {
+                input.classList.remove("is-invalid"); // Remove error class
+                input.classList.add("is-valid"); // Show valid state
+                input.nextElementSibling.style.display = "none"; // Hide error message
+            } else {
+                input.classList.add("is-invalid"); // Add error class
+                input.classList.remove("is-valid"); // Remove valid class
+                input.nextElementSibling.style.display = "block"; // Show error message
+                input.nextElementSibling.textContent = message; // Set error message
+            }
+        }
+
+        // Real-time validation on blur (unfocus)
+        categoryName.addEventListener("blur", function () {
+            validateField(categoryName, categoryName.value.trim() !== "", "Category Name is required.");
+        });
+
+        categoryStatus.addEventListener("blur", function () {
+            validateField(categoryStatus, categoryStatus.value.trim().length !== '', "Category Status is required.");
+        });
+
+        // Validate all fields before submitting
+        document.getElementById("createCategoryBtn").addEventListener("click", function () {
+            validateField(categoryName, categoryName.value.trim() !== "", "Category Name is required.");
+            validateField(categoryStatus, categoryStatus.value.trim().length !== '', "Category Status is required.");
+
+            if (document.querySelectorAll(".is-invalid").length === 0) {
+                alert("Form is valid! Submitting...");
+                // You can call your fetch() function here to submit the form
+            } else {
+                alert("Please fix errors before submitting.");
+            }
+        });
+    });
+
+
+
+    // Function to generate random color based on name
+    function GetRandomColor(name) {
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        let color = '';
+        for (let i = 0; i < 3; i++) {
+            let value = (hash >> (i * 8)) & 0xFF;
+            color += ('00' + value.toString(16)).substr(-2);
+        }
+        return color;
+    }
+
+    // For dropdown functionality
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown[open]').forEach(function(dropdown) {
+                dropdown.removeAttribute('open');
+            });
+        }
+    });
+
+    function callApi() {
+        $.ajax({
+            url: 'https://localhost:7034/api/Admin/GetSystemAccountById/1',
+            type: 'GET',
+            success: function (data) {
+                console.log("Success:", data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+            }
+        });
+    }
+
+
+    function ShowUpdateCategoryModal(id) {
+
+        fetch('https://localhost:7034/api/Staff/Category/'+id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create category");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Success:", data);
+            let modal = document.getElementById("updateCategoryModal");
+            modal.querySelector("#categoryId").value = data.categoryId;
+            modal.querySelector("#categoryName").value = data.categoryName;
+            modal.querySelector("#categoryDescription").value = data.categoryDesciption;
+            modal.querySelector("#parentCategory").value = data.parentCategory == null?"-1":data.parentCategory.parentCategoryId;
+            modal.querySelector("#categoryStatus").value = data.isActive == true?"true":"false"
+            
+            const parent = data.parentCategory;
+            // console.log("parent: " + parent.parentCategoryId);
+
+            // const categoryDescription = modal.querySelector("#categoryDescription").value;
+            // const parentCategoryId = modal.querySelector("#parentCategory").value;
+            // const categoryStatus = modal.querySelector("#categoryStatus").value;
+
+            $('#updateCategoryModal').modal('show');
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error creating category!");
+        });
+
+        // let category;
+        // categories.forEach(ct =>{
+        //     if(ct.categoryId === id){
+        //         category = ct;
+        //         console.log(category);
+        //     let modal = document.getElementById("updateCategoryModal");
+        //     modal.querySelector("#categoryId").value = ct.categoryId == null?"":ct.categoryId;
+        //     modal.querySelector("#categoryName").value = ct.categoryName == null?"":ct.categoryName;
+        //     modal.querySelector("#categoryDescription").value = ct.categoryDesciption == null?"":ct.categoryDesciption;
+        //     modal.querySelector("#parentCategory").value = try {
+        //         ct.parentCategory.categoryId;
+        //     } catch (error) {
+        //         "-1";
+        //     }
+        //     modal.querySelector("#categoryStatus").value = ct.isActive.toString() == null?"true":"false";
+        //     }
+        // });
+        $('#updateCategoryModal').modal('show');
+    }
+
+
+    function UpdateCategory(){
+         let modal = document.getElementById("updateCategoryModal");
+         const categoryId = modal.querySelector("#categoryId").value;
+         const categoryName = modal.querySelector("#categoryName").value;
+         const categoryDescription = modal.querySelector("#categoryDescription").value;
+         const parentCategoryId = modal.querySelector("#parentCategory").value;
+         const categoryStatus = modal.querySelector("#categoryStatus").value;
+
+
+         const formData = {
+            CategoryId: categoryId,
+            CategoryName: categoryName,
+            CategoryDesciption: categoryDescription,
+            ParentCategoryId: parentCategoryId === "-1" ? null : parentCategoryId,
+            IsActive: categoryStatus === "true"?true:false,
+         }
+
+         console.log(formData);
+
+         if(FormData.CategoryId === ""){
+             return;
+         }
+
+
+            fetch('https://localhost:7034/api/Staff/Category', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create category");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Success:", data);
+            alert("Category created successfully!");
+            fetchCategories();
+            // Close Modal and Clean form
+            // Close the modal
+            $('#newCategoryModal').modal('hide');
+
+            let form = document.getElementById("createCategoryForm");
+            form.reset();
+
+            // Clear form fields
+            document.getElementById("createCategoryForm").reset();
+            form.querySelectorAll(".is-valid, .is-invalid").forEach(field => {
+            field.classList.remove("is-valid", "is-invalid");
+            });
+            // Reload the page
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error creating category!");
+        });
+
+    }
+
+
+    function ViewCategoryModal(id) {
+
+        fetch('https://localhost:7034/api/Staff/Category/'+id, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create category");
+            return response.json();
+        })
+        .then(data => {
+            console.log("Success:", data);
+            let modal = document.getElementById("viewCategoryModal");
+            modal.querySelector("#categoryId").value = data.categoryId;
+            modal.querySelector("#categoryName").value = data.categoryName;
+            modal.querySelector("#categoryDescription").value = data.categoryDesciption;
+            modal.querySelector("#parentCategory").value = data.parentCategory == null?"-1":data.parentCategory.parentCategoryId;
+            modal.querySelector("#categoryStatus").value = data.isActive == true?"true":"false"
+
+            // console.log("parent: " + parent.parentCategoryId);
+
+            // const categoryDescription = modal.querySelector("#categoryDescription").value;
+            // const parentCategoryId = modal.querySelector("#parentCategory").value;
+            // const categoryStatus = modal.querySelector("#categoryStatus").value;
+
+            $('#viewCategoryModal').modal('show');
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error creating category!");
+        });
+
+    }
+
+
+    function DeleteCategory(id) {
+        fetch('https://localhost:7034/api/Staff/Category/'+id, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Failed to create category");
+            return response.json();
+            
+        })
+        .then(data => {
+            console.log("Success:", data);
+            window.location.reload();
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error creating category!");
+        });
+    }
+
+    // function GetAllCategory(){
+    //     $.ajax({
+    //         url: 'https:localhost:7034/api/Staff/Categories',
+    //         type: 'GET',
+    //         success: function (data) {
+    //             console.log("Success:", data);
+    //         },
+    //         error: function (xhr, status, error) {
+    //             console.error("Error:", error);
+    //         }
+    //     });
+    // }
+</script>
+

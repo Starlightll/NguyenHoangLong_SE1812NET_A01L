@@ -39,5 +39,10 @@ namespace NguyenHoangLongMVC.Data.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IEnumerable<NewsArticle>> GetAll()
+        {
+            return await _context.NewsArticles.Include(na => na.CreatedBy).Include(na => na.Category).Include(na => na.Tags).ToListAsync();
+        }
     }
 }

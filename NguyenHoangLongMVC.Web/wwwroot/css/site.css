@@ -1,3 +1,7 @@
+
+
+
+
 html {
   font-size: 14px;
 }
@@ -19,6 +23,39 @@ html {
 
 body {
   margin-bottom: 60px;
+}
+
+/* Modern News Article Style */
+:root {
+    --color-bg: #ffffff;
+    --color-text: #333333;
+    --color-border: #e5e5e5;
+    --color-hover: #f9f9f9;
+    --color-link: #0066cc;
+    --color-muted: #767676;
+    --color-header-bg: #f9f9f9;
+    --color-primary: #1a73e8;
+    --color-success: #34a853;
+    --color-info: #4285f4;
+    --color-warning: #fbbc05;
+    --color-danger: #ea4335;
+    --color-secondary: #5f6368;
+    --font-serif: Georgia, "Times New Roman", serif;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.is-valid {
+    border-color: #28a745 !important;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    display: none; /* Hidden by default */
+    color: #dc3545;
+    font-size: 0.875rem;
 }
 
 

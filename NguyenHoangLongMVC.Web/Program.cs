@@ -43,6 +43,8 @@ namespace NguyenHoangLongMVC.Web
             builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IAccountService, AccountService>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
 
             //Register AutoMapper
             builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -55,6 +57,14 @@ namespace NguyenHoangLongMVC.Web
                                       .AllowAnyMethod()
                                       .AllowAnyHeader());
             });
+
+
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                });
 
             var app = builder.Build();
 

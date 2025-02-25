@@ -47,5 +47,11 @@ namespace NguyenHoangLongMVC.Application.Services
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IEnumerable<NewsArticleDto>> GetHistory()
+        {
+            var newsArticles = await _newsArticleRepository.GetAll();
+            return _mapper.Map<IEnumerable<NewsArticleDto>>(newsArticles);
+        }
     }
 }

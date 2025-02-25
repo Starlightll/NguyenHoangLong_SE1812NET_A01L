@@ -1,52 +1,48 @@
-﻿@model IEnumerable<NguyenHoangLongMVC.Application.DTOs.SystemAccountDto>
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<NguyenHoangLongMVC.Application.DTOs.NewsArticleDto>
+
 @{
 
-    String GetRandomColor(String name)
-    {
-        int hash = 0;
-        for (int i = 0; i < name.Length; i++)
-        {
-            hash = name.ToCharArray().Length + ((hash << 5) - hash);
-        }
-        String color = "";
-        for (int i = 0; i < 3; i++)
-        {
-            int value = (hash >> (i * 8)) & 0xFF;
-            color += String.Format("%02x", value);
-        }
-        return "#" + color;
-    }
 }
 
 <link rel="stylesheet" href="~/css/account-management.css" asp-append-version="true" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-<!-- New Account Modal -->
-<div class="modal fade" id="newAccountModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newAccountModalLabel" aria-hidden="true">
+<!-- New Category Modal -->
+<div class="modal fade" id="newArticleModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newAccountModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content gh-border gh-rounded-md">
             <div class="modal-header gh-border-bottom">
-                <h5 class="modal-title gh-h5" id="newAccountModalLabel">New account</h5>
+                <h5 class="modal-title gh-h5" id="newAccountModalLabel">New Article</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body gh-px-4">
                 <form>
                     <div class="mb-3">
-                        <label for="accountName" class="form-label gh-fw-semibold gh-mb-1">Username</label>
-                        <input type="text" class="form-control form-control-sm" id="accountName">
+                        <label for="categoryName" class="form-label gh-fw-semibold gh-mb-1">Category Name</label>
+                        <input type="text" class="form-control form-control-sm" id="categoryName">
                     </div>
                     <div class="mb-3">
-                        <label for="accountEmail" class="form-label gh-fw-semibold gh-mb-1">Email address</label>
-                        <input type="email" class="form-control form-control-sm" id="accountEmail">
-                        <div class="form-text">We'll communicate with this user at this address.</div>
+                        <label for="categoryDescription" class="form-label gh-fw-semibold gh-mb-1">Category Description</label>
+                        <textarea type="text" class="form-control form-control-sm" id="categoryDescription"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="accountRole" class="form-label gh-fw-semibold gh-mb-1">Role</label>
-                        <select class="form-select form-select-sm" id="accountRole">
+                        <label for="parentCategory" class="form-label gh-fw-semibold gh-mb-1">Parent Category</label>
+                        <select class="form-select form-select-sm" id="parentCategory">
                             <option value="0">Admin</option>
                             <option value="1">Staff</option>
                             <option value="2">Lecturer</option>
                             <option value="3">User</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="acountStatus" class="form-label gh-fw-semibold gh-mb-1">Status</label>
+                        <select class="form-select form-select-sm" id="acountStatus">
+                            <option value="0">Active</option>
+                            <option value="1">Disable</option>
                         </select>
                     </div>
                 </form>
@@ -60,7 +56,7 @@
 </div>
 
 <div class="gh-Layout gh-Layout--flowRow-until-md">
-    
+
 
     <!-- Main content -->
     <div class="gh-Layout-main">
@@ -72,7 +68,7 @@
                     <p class="gh-color-fg-muted">Manage system accounts and their permissions</p>
                 </div>
                 <div class="gh-mb-3 gh-mb-md-0">
-                    <button type="button" class="gh-btn gh-btn-primary gh-btn-sm" data-bs-toggle="modal" data-bs-target="#newAccountModal">
+                    <button type="button" class="gh-btn gh-btn-primary gh-btn-sm" data-bs-toggle="modal" data-bs-target="#newArticleModal">
                         <i class="fas fa-plus gh-me-1"></i> New account
                     </button>
                 </div>
@@ -81,10 +77,9 @@
             <!-- Filter section -->
             <div class="gh-subnav gh-mb-4">
                 <nav class="gh-subnav-links" aria-label="Account filter navigation">
-                    <a class="gh-subnav-item gh-selected" href="#">All accounts <span class="gh-Counter">@Model.Count()</span></a>
-                    <a class="gh-subnav-item" href="#">Admins <span class="gh-Counter">@Model.Count(m => m.AccountRole == 0)</span></a>
-                    <a class="gh-subnav-item" href="#">Staff <span class="gh-Counter">@Model.Count(m => m.AccountRole == 1)</span></a>
-                    <a class="gh-subnav-item" href="#">Lecturers <span class="gh-Counter">@Model.Count(m => m.AccountRole == 2)</span></a>
+                    <a class="gh-subnav-item gh-selected" href="#">All Articles <span class="gh-Counter">@Model.Count()</span></a>
+                    <a class="gh-subnav-item" href="#">Active <span class="gh-Counter">@Model.Count(m => m.NewsStatus == true)</span></a>
+                    <a class="gh-subnav-item" href="#">Disable <span class="gh-Counter">@Model.Count(m => m.NewsStatus == false)</span></a>
                 </nav>
                 <div class="gh-subnav-search">
                     <input type="text" class="form-control gh-subnav-search-input" placeholder="Find an account...">
@@ -102,26 +97,24 @@
                     {
                         <li class="gh-Box-row gh-d-flex gh-flex-items-center">
                             <div class="gh-flex-shrink-0 gh-me-3">
-                                <div class="gh-avatar gh-CircleBadge" style="background-color: #@(GetRandomColor(item.AccountName))">
-                                    <span class="gh-text-white">@item.AccountName.Substring(0, 1).ToUpper()</span>
+                                <div class="gh-avatar gh-CircleBadge" style="background-color: #111111)">
+                                    <span class="gh-text-white">@item.NewsArticleId</span>
                                 </div>
                             </div>
                             <div class="gh-flex-auto gh-min-width-0">
                                 <div class="gh-d-flex gh-flex-items-center">
-                                    <strong class="gh-me-2">@item.AccountName</strong>
+                                    <strong class="gh-me-2">@item.NewsTitle</strong>
                                     @{
-                                        (string roleClass, string labelClass, string role) = item.AccountRole switch
+                                        (string roleClass, string labelClass, string role) = item.NewsStatus switch
                                         {
-                                            0 => ("gh-Label--accent", "gh-bg-accent-emphasis", "Admin"),
-                                            1 => ("gh-Label--success", "gh-bg-success", "Staff"),
-                                            2 => ("gh-Label--info", "gh-bg-info", "Lecturer"),
-                                            _ => ("gh-Label--secondary", "gh-bg-neutral", "User")
+                                            true => ("gh-Label--success", "gh-bg-accent-emphasis", "Active"),
+                                            false => ("gh-Label--warning", "gh-bg-success", "Disable")
                                         };
                                     }
                                     <span class="gh-Label @roleClass">@role</span>
                                 </div>
                                 <div class="gh-color-fg-muted gh-text-small">
-                                    @item.AccountEmail
+                                    @item.CreatedBy.AccountName
                                 </div>
                             </div>
                             <div class="gh-BtnGroup gh-d-flex">
