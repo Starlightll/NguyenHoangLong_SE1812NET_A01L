@@ -17,12 +17,25 @@ namespace NguyenHoangLongMVC.Data.Repositories
         {
             _context = context;
         }
+
+        public Task AddNewsArticleAsync(NewsArticle newsArticle)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<NewsArticle>> GetAllNewsArticleAsync()
         {
             return await _context.NewsArticles.Include(na => na.CreatedBy).Include(na => na.Category).Include(na => na.Tags).Where(na => na.NewsStatus == true).ToListAsync();
         }
 
-        public Task<NewsArticle> GetNewsArticleByIdAsync(string newsArticleId)
+        public async Task<NewsArticle> GetNewsArticleByIdAsync(string newsArticleId)
+        {
+            return await _context.NewsArticles.Include(na => na.CreatedBy).Include(na => na.Category).Include(na => na.Tags).FirstOrDefaultAsync(na => na.NewsArticleId == newsArticleId);
+        }
+
+
+
+        public Task UpdateNewsArticleAsync(NewsArticle newsArticle)
         {
             throw new NotImplementedException();
         }

@@ -21,10 +21,31 @@ namespace NguyenHoangLongMVC.Application.Services
             _mapper = mapper;
         }
 
+        public Task AddNewsArticleAsync(NewsArticleDto newsArticleDto)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<NewsArticleDto>> GetAllNewsArticleAsync()
         {
             var newsArticles = await _newsArticleRepository.GetAllNewsArticleAsync();
             return _mapper.Map<IEnumerable<NewsArticleDto>>(newsArticles);
+        }
+
+        public Task<IEnumerable<NewsArticleDto>> GetNewsArticleByCategoryAsync(int categoryId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<NewsArticleDto> GetNewsArticleByIdAsync(string newsArticleId)
+        {
+            var newsArticle = await _newsArticleRepository.GetNewsArticleByIdAsync(newsArticleId);
+            return _mapper.Map<NewsArticleDto>(newsArticle);
+        }
+
+        public Task UpdateNewsArticleAsync(NewsArticleDto newsArticleDto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

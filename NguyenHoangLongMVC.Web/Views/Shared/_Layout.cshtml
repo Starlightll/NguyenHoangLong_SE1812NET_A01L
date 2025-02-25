@@ -38,38 +38,36 @@
                         </li>
                         @if (!string.IsNullOrEmpty(account))
                         {
-                            var user = Newtonsoft.Json.JsonConvert.DeserializeObject<NguyenHoangLongMVC.Application.DTOs.SystemAccountDto>(account);
-                            if (user.AccountRole == 0)
-                            {
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle dropdown-menu-dark" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Management
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="AccountManagement">Accounts Management</a></li>
-                                    </ul>
-                                </div>
+                            <div class="dropdown align-content-center">
+                                <button class="btn btn-secondary dropdown-toggle dropdown-menu-dark" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Management
+                                </button>
+                            @{
+                                    var user = Newtonsoft.Json.JsonConvert.DeserializeObject<NguyenHoangLongMVC.Application.DTOs.SystemAccountDto>(account);
+                                    if (user.AccountRole == 0)
+                                    {
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="AccountManagement">Accounts Management</a></li>
+                                        </ul>
+                                    }
+                                    if (user.AccountRole == 1)
+                                    {
+                                       
+                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                            <li><button class="dropdown-item" type="button">Category Management</button></li>
+                                            <li><button class="dropdown-item" type="button">News Article Management</button></li>
+                                            <li><button class="dropdown-item" type="button">History</button></li>
+                                        </ul>
+                                    }
                             }
-                                if (user.AccountRole == 1)
-                            {
-                                <div class="dropdown">
-                                    <button class="btn btn-secondary dropdown-toggle dropdown-menu-dark" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Management
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                        <li><button class="dropdown-item" type="button">Category Management</button></li>
-                                        <li><button class="dropdown-item" type="button">News Article Management</button></li>
-                                        <li><button class="dropdown-item" type="button">History</button></li>
-                                    </ul>
-                                </div>
-                            }
+                            </div>
                         }
                     </ul>
 
                     @if (User.Identity.IsAuthenticated)
                     {
                         <div class="btn-group">
-                            <button type="button" class="btn btn-border-gradiant dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                            <button type="button" class="btn btn-border-gradiant dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" style="margin: 0.5rem 0rem;">
                                 Hello, @User.Identity.Name
                             </button>
                             <ul class="dropdown-menu dropdown-menu-lg-end dropdown-menu-prime mt-2">

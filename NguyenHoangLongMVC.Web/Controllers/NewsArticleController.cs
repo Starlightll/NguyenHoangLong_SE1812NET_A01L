@@ -18,5 +18,11 @@ namespace NguyenHoangLongMVC.Web.Controllers
             IEnumerable<NewsArticleDto> newsArticles = await newsArticleService.GetAllNewsArticleAsync();
             return View(newsArticles);
         }
+
+        public async Task<IActionResult> Details(string id)
+        {
+            var newsArticle = await newsArticleService.GetNewsArticleByIdAsync(id);
+            return View(newsArticle);
+        }
     }
 }
